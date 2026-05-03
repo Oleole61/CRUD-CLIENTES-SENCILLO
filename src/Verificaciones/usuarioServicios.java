@@ -3,6 +3,7 @@ package Verificaciones;
 
 
 import dao.UsuarioDAO;
+
 import java.util.List;
 import modelo.Usuario;
 public class usuarioServicios {
@@ -22,7 +23,7 @@ public class usuarioServicios {
     
     public boolean verficacionesUpdate(Usuario user){
         if(!(dao.existeUsuarioPorId(user.getId()))){
-            System.out.println("No se encontro el usuario");
+            
             return false;
         }
         
@@ -30,6 +31,13 @@ public class usuarioServicios {
             return false;
         }
         
+        return true;
+    }
+    
+    public boolean verificacionesDelete(int id){
+        if(!(dao.existeUsuarioPorId(id))){
+            return false;
+        }
         return true;
     }
     

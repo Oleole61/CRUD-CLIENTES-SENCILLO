@@ -56,15 +56,15 @@ public class UsuarioDAO {
     
     }   
     //Actulizacion de datos (UPDATE)
-    public void actualizarUsuario(int id, String correo, String nombre, String password){
+    public void actualizarUsuario(Usuario user){
        
-        System.out.println("Comenzando actulizacion de datos del usuario "+id);
+        
         String sql="UPDATE Usuarios SET correo = ?, nombre = ?, password = ? WHERE id = ?";
         try(PreparedStatement ps= conexion.prepareStatement(sql)) {
-            ps.setString(1,correo);
-            ps.setString(2, nombre);
-            ps.setString(3, password);
-            ps.setInt(4, id);
+            ps.setString(1,user.getCorreo());
+            ps.setString(2, user.getNombre());
+            ps.setString(3, user.getPassword());
+            ps.setInt(4, user.getId());
             int filas=ps.executeUpdate();
            
         } catch (SQLException e) {

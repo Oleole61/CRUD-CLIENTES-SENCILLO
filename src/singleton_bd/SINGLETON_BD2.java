@@ -5,13 +5,21 @@
 package singleton_bd;
 
 import dao.UsuarioDAO;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import modelo.Usuario;
+import Verificaciones.usuarioServicios;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author fabri
  */
 public class SINGLETON_BD2 extends javax.swing.JFrame {
+    UsuarioDAO DAO = new UsuarioDAO();
+    List<Usuario> usuariosbd= new ArrayList<>();
+    usuarioServicios US=new usuarioServicios(DAO);
     
     /**
      * Creates new form SINGLETON_BD2
@@ -23,9 +31,16 @@ public class SINGLETON_BD2 extends javax.swing.JFrame {
         modelo.addColumn("Nombre");
         modelo.addColumn("Correo");
         modelo.addColumn("Password");
+        usuariosbd=DAO.listarUsuarios();
+        for (Usuario usuario : usuariosbd) {
+            modelo.addRow(new Object[]{
+                usuario.getId(),
+                usuario.getNombre(),
+                usuario.getCorreo(),
+                usuario.getPassword()
+             });
+        }
         
-        modelo.addRow(new Object[]{
-        });
         tbl_usuarios.setModel(modelo);
     }
 
@@ -197,26 +212,79 @@ public class SINGLETON_BD2 extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+     
+        
     private void btn_limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_limpiarActionPerformed
-        // TODO add your handling code here:
+       txt_nombre.setText("");
+       txt_correo.setText("");
+       txt_password.setText("");
+       txt_nombre.requestFocus();
     }//GEN-LAST:event_btn_limpiarActionPerformed
 
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
-        // TODO add your handling code here:
+        DefaultTableModel modelo = (DefaultTableModel) tbl_usuarios.getModel();
+        String Nombre= txt_nombre.getText();
+        String Correo= txt_correo.getText();
+        String Password=txt_password.getText();
+        Usuario u = new Usuario(Nombre, Correo, Password);
+        if(US.verificacionCreacionUser(u)){
+            DAO.crearUsuario(u);
+            reloadTable(modelo);
+            JOptionPane.showMessageDialog(null, "Usuario registrado con exito","Aviso",JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            JOptionPane.showMessageDialog(null,"Uno no los campos no esta correctamente llenado","ERROR",JOptionPane.ERROR_MESSAGE);
+        }
+        
+        
+      
     }//GEN-LAST:event_btn_agregarActionPerformed
 
     private void txt_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_passwordActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here
     }//GEN-LAST:event_txt_passwordActionPerformed
 
     private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
-        // TODO add your handling code here:
+       DefaultTableModel modelo=(DefaultTableModel) tbl_usuarios.getModel();
+       String nombre= txt_nombre.getText();
+       String Correo= txt_correo.getText();
+       String password=txt_password.getText();
+       int id= (int)modelo.getValueAt(tbl_usuarios.getSelectedRow(), 0);
+       Usuario user=new Usuario(nombre, Correo, password);
+        if (US.verficacionesUpdate(user) && id>=0) {
+           DAO.actualizarUsuario(user);
+           reloadTable(modelo);    
+        }else{
+            System.out.println("ERROR");
+        }
+       
+       txt_nombre.requestFocus();
+       
     }//GEN-LAST:event_btn_editarActionPerformed
 
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
-        // TODO add your handling code here:
+        DefaultTableModel modelo = (DefaultTableModel) tbl_usuarios.getModel();
+        int id=(int)modelo.getValueAt(tbl_usuarios.getSelectedRow(), 0);
+        if(US.verificacionesDelete(id)&& id >=0){
+            DAO.eliminarUsuarios(id);
+            modelo.removeRow(tbl_usuarios.getSelectedRow());
+            
+            reloadTable(modelo);
+        }  
     }//GEN-LAST:event_btn_eliminarActionPerformed
 
+    private void reloadTable( DefaultTableModel modelo){
+        usuariosbd=DAO.listarUsuarios();
+        modelo.setRowCount(0);
+        for (Usuario usuario : usuariosbd) {
+            modelo.addRow(new Object[]{
+                usuario.getId(),
+                usuario.getNombre(),
+                usuario.getCorreo(),
+                usuario.getPassword()
+            });
+        }
+    }
+                
     /**
      * @param args the command line arguments
      */
