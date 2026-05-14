@@ -234,8 +234,7 @@ public class SINGLETON_BD2 extends javax.swing.JFrame {
         }else{
             JOptionPane.showMessageDialog(null,"Uno no los campos no esta correctamente llenado","ERROR",JOptionPane.ERROR_MESSAGE);
         }
-        
-        
+        txt_nombre.requestFocus();
       
     }//GEN-LAST:event_btn_agregarActionPerformed
 
@@ -248,13 +247,14 @@ public class SINGLETON_BD2 extends javax.swing.JFrame {
        String nombre= txt_nombre.getText();
        String Correo= txt_correo.getText();
        String password=txt_password.getText();
-       int id= (int)modelo.getValueAt(tbl_usuarios.getSelectedRow(), 0);
-       Usuario user=new Usuario(nombre, Correo, password);
+       int id=(int)modelo.getValueAt(tbl_usuarios.getSelectedRow(), 0);
+       Usuario user=new Usuario(id, nombre, Correo, password);
         if (US.verficacionesUpdate(user) && id>=0) {
            DAO.actualizarUsuario(user);
-           reloadTable(modelo);    
+           reloadTable(modelo);
+           JOptionPane.showMessageDialog(null, "Actulizacion exitosa","Aviso",JOptionPane.INFORMATION_MESSAGE);
         }else{
-            System.out.println("ERROR");
+           JOptionPane.showMessageDialog(null,"Campos llenados incorrectamente o indice no encontrado","ERROR",JOptionPane.ERROR_MESSAGE);
         }
        
        txt_nombre.requestFocus();
@@ -267,9 +267,11 @@ public class SINGLETON_BD2 extends javax.swing.JFrame {
         if(US.verificacionesDelete(id)&& id >=0){
             DAO.eliminarUsuarios(id);
             modelo.removeRow(tbl_usuarios.getSelectedRow());
-            
             reloadTable(modelo);
-        }  
+            JOptionPane.showMessageDialog(null, "Usuario eliminado exitosamente", "Aviso",JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            JOptionPane.showMessageDialog(null,"Indice no encontrado","ERROR",JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btn_eliminarActionPerformed
 
     private void reloadTable( DefaultTableModel modelo){
